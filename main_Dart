@@ -1,0 +1,53 @@
+import 'dart:html';
+import 'dart:math' as math;
+
+CanvasElement context;
+CanvasRenderingContext2D ctx;
+
+//int x = 25;
+//int y = 25;
+
+void clear() {
+  ctx..fillStyle = "teal";
+  ctx..fillRect(0, 0, context.width, context.height);
+}
+
+void main() {
+  context = querySelector('#canvas');
+  ctx = context.getContext('2d');
+
+  ctx..fillStyle = "yellow";
+  ctx..strokeStyle = "white";
+  //drawBall();
+  Ball ball = Ball(25, 25, 15, 0, 0);
+  ball.drawBall();
+
+  querySelector("#canvas").onClick.listen(ball.moveBall);
+}
+
+class Ball {
+  var x; //x value of ball on canvas
+  var y; //y value of ball on canvas
+  var r; //radius of ball
+  var vx; //velocity in x direction
+  var vy; //velocity in y direction
+
+  Ball(this.x, this.y, this.r, this.vx, this.vy);
+  void drawBall() {
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 3.14 * 2);
+    ctx.fillStyle = "yellow";
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  void moveBall(MouseEvent event) {
+    x += 4;
+    y += 4;
+    clear();
+    drawBall();
+
+    //ctx..fillStyle = "red";
+    //ctx..fillRect(x,y,40,40);
+  }
+}
