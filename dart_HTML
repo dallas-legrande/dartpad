@@ -1,0 +1,7 @@
+<div id="wrapper">  
+  <canvas id="canvas" width="450" height="450"></canvas>
+</div>  
+
+<style>
+  canvas{background: teal;}
+</style>
