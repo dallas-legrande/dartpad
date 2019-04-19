@@ -22,8 +22,9 @@ class Ball{
     this.y = y;
     this.vx = vx;
     this.vy = vy;
-    
+    drawBall();
     querySelector("#canvas").onClick.listen(updateBall);
+    
   }
   
 	void clear(){
@@ -32,7 +33,11 @@ class Ball{
       ..fillRect(0,0,context.width, context.height);
   }
   
-  void updateBall(MouseEvent event){
+  void updateBall(MouseEvent e){
+    //start the ball at the position the mouse was clicked at
+    x = e.page.x - 90;				//x needs an offset to show up exactly where the mouse is clicked
+    y = e.page.y;   
+    
    	//apply velocity to position
     x += vx;				
     y += vy;
@@ -61,7 +66,7 @@ class Ball{
     clear();
     ctx
       ..beginPath()
-      ..arc(x, y, r, 0, 3.14*2)
+      ..arc(x, y, r, 0, math.pi*2)
       ..fillStyle = "yellow"
       ..strokeStyle = "white"
       ..fill()
