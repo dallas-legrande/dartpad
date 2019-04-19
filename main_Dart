@@ -1,53 +1,89 @@
 import 'dart:html';
 import 'dart:math' as math;
+import 'dart:async';
 
-CanvasElement context;
-CanvasRenderingContext2D ctx;
 
-//int x = 25;
-//int y = 25;
-
-void clear() {
-  ctx..fillStyle = "teal";
-  ctx..fillRect(0, 0, context.width, context.height);
+void main(){
+  Ball(25,25,0,0);
 }
 
-void main() {
-  context = querySelector('#canvas');
-  ctx = context.getContext('2d');
 
-  ctx..fillStyle = "yellow";
-  ctx..strokeStyle = "white";
-  //drawBall();
-  Ball ball = Ball(25, 25, 15, 0, 0);
-  ball.drawBall();
-
-  querySelector("#canvas").onClick.listen(ball.moveBall);
-}
-
-class Ball {
-  var x; //x value of ball on canvas
-  var y; //y value of ball on canvas
-  var r; //radius of ball
-  var vx; //velocity in x direction
-  var vy; //velocity in y direction
-
-  Ball(this.x, this.y, this.r, this.vx, this.vy);
-  void drawBall() {
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, 3.14 * 2);
-    ctx.fillStyle = "yellow";
-    ctx.fill();
-    ctx.closePath();
-  }
-
-  void moveBall(MouseEvent event) {
-    x += 4;
-    y += 4;
-    clear();
+class Ball{
+  var x; 
+  var y; 
+  static const r = 15; 
+  var vx;
+  var vy;
+  //static const ms = const Duration(seconds: 1);
+  
+  final context = (querySelector('#canvas') as CanvasElement);
+  final ctx = (querySelector('#canvas') as CanvasElement).context2D;
+  //Timer.periodic(ms, (timer)){
+  //  updateBall();
+  //}
+  
+  
+  Ball(int x, int y, int vx, int vy){
+  	this.x = x;
+    this.y = y;
+    this.vx = vx;
+    this.vy = vy;
     drawBall();
-
-    //ctx..fillStyle = "red";
-    //ctx..fillRect(x,y,40,40);
+    querySelector("#canvas").onClick.listen(restartBall);
+    //const t = const Duration(milliseconds: 4);
+    new Timer.periodic(new Duration(milliseconds: 40),(t) => updateBall());
+    //Timer.run(updateBall);
+    
   }
+  
+  //redraw the screen
+	void clear(){
+    ctx
+      ..fillStyle = "teal"
+      ..fillRect(0,0,context.width, context.height);
+  }
+  
+  void restartBall(MouseEvent e){
+    //start the ball at the position the mouse was clicked at
+    x = e.page.x - 90;				//x needs an offset to show up exactly where the mouse is clicked
+    y = e.page.y;
+    updateBall();
+  }
+  
+  void updateBall(){
+   	//apply velocity to position
+    x += vx;				
+    y += vy;
+    
+    //apply drag/friction to velocity
+    vx *= .99;
+    vy *= .99;
+    
+    //apply gravity to velocity
+    vx += .25;
+    vy += .25;
+    
+    //check for collisions
+    if(y + r > context.height){
+      y = context.height - r;
+      vy = -vy.abs();
+    }
+    if(x + r > context.height){
+      x = context.height - r;
+      vx = -vx.abs();
+    }
+    drawBall();
+  }
+
+  void drawBall(){
+    clear();
+    ctx
+      ..beginPath()
+      ..arc(x, y, r, 0, math.pi*2)
+      ..fillStyle = "yellow"
+      ..strokeStyle = "white"
+      ..fill()
+      ..closePath();
+}
+  
 }
