@@ -1,3 +1,9 @@
+/* Program to draw a bouncing ball on the screen
+ * gravity pulls the ball towards the bottom right corner
+ * Author: Dallas LeGrande
+ * April 18, 2019
+*/
+
 import 'dart:html';
 import 'dart:math' as math;
 import 'dart:async';
@@ -9,30 +15,26 @@ void main(){
 
 
 class Ball{
-  var x; 
-  var y; 
-  static const r = 15; 
-  var vx;
-  var vy;
-  //static const ms = const Duration(seconds: 1);
+  var x; 									//x location of ball
+  var y; 									//y location of ball
+  static const r = 15; 		//radius of ball
+  var vx;              		//velocity in the x direction
+  var vy;									//velocity in the y direction
   
-  final context = (querySelector('#canvas') as CanvasElement);
-  final ctx = (querySelector('#canvas') as CanvasElement).context2D;
-  //Timer.periodic(ms, (timer)){
-  //  updateBall();
-  //}
+  final context = (querySelector('#canvas') as CanvasElement);				//creates a canvas element
+  final ctx = (querySelector('#canvas') as CanvasElement).context2D;  //creates a context2D
   
-  
+  //Ball constructor
   Ball(int x, int y, int vx, int vy){
   	this.x = x;
     this.y = y;
     this.vx = vx;
     this.vy = vy;
     drawBall();
-    querySelector("#canvas").onClick.listen(restartBall);
-    //const t = const Duration(milliseconds: 4);
+    querySelector("#canvas").onClick.listen(restartBall);			//mouse listener- runs restartBall method on click
+
+    //runs the updateBall method every 40 milliseconds
     new Timer.periodic(new Duration(milliseconds: 40),(t) => updateBall());
-    //Timer.run(updateBall);
     
   }
   
@@ -43,13 +45,14 @@ class Ball{
       ..fillRect(0,0,context.width, context.height);
   }
   
+  //start the ball at the position the mouse was clicked at
   void restartBall(MouseEvent e){
-    //start the ball at the position the mouse was clicked at
     x = e.page.x - 90;				//x needs an offset to show up exactly where the mouse is clicked
     y = e.page.y;
     updateBall();
   }
   
+  //applies gravity to the ball to move it towards the bottom right corner
   void updateBall(){
    	//apply velocity to position
     x += vx;				
@@ -63,18 +66,20 @@ class Ball{
     vx += .25;
     vy += .25;
     
-    //check for collisions
+    //check for wall collisions
     if(y + r > context.height){
       y = context.height - r;
       vy = -vy.abs();
     }
-    if(x + r > context.height){
+    if(x + r > context.width){
       x = context.height - r;
       vx = -vx.abs();
     }
+    
     drawBall();
   }
 
+  //draw the ball on the screen
   void drawBall(){
     clear();
     ctx
