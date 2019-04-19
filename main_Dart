@@ -1,5 +1,6 @@
 import 'dart:html';
 import 'dart:math' as math;
+import 'dart:async';
 
 
 void main(){
@@ -13,9 +14,14 @@ class Ball{
   static const r = 15; 
   var vx;
   var vy;
+  //static const ms = const Duration(seconds: 1);
   
   final context = (querySelector('#canvas') as CanvasElement);
   final ctx = (querySelector('#canvas') as CanvasElement).context2D;
+  //Timer.periodic(ms, (timer)){
+  //  updateBall();
+  //}
+  
   
   Ball(int x, int y, int vx, int vy){
   	this.x = x;
@@ -23,21 +29,28 @@ class Ball{
     this.vx = vx;
     this.vy = vy;
     drawBall();
-    querySelector("#canvas").onClick.listen(updateBall);
+    querySelector("#canvas").onClick.listen(restartBall);
+    //const t = const Duration(milliseconds: 4);
+    new Timer.periodic(new Duration(milliseconds: 40),(t) => updateBall());
+    //Timer.run(updateBall);
     
   }
   
+  //redraw the screen
 	void clear(){
     ctx
       ..fillStyle = "teal"
       ..fillRect(0,0,context.width, context.height);
   }
   
-  void updateBall(MouseEvent e){
+  void restartBall(MouseEvent e){
     //start the ball at the position the mouse was clicked at
     x = e.page.x - 90;				//x needs an offset to show up exactly where the mouse is clicked
-    y = e.page.y;   
-    
+    y = e.page.y;
+    updateBall();
+  }
+  
+  void updateBall(){
    	//apply velocity to position
     x += vx;				
     y += vy;
@@ -52,7 +65,7 @@ class Ball{
     
     //check for collisions
     if(y + r > context.height){
-      y - context.height - r;
+      y = context.height - r;
       vy = -vy.abs();
     }
     if(x + r > context.height){
